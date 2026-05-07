@@ -9,7 +9,8 @@ export function mapGame(row: any): Game {
     joyDice1: row.joy_dice_1,
     joyDice2: row.joy_dice_2,
     startedAt: row.started_at,
-    endedAt: row.ended_at
+    endedAt: row.ended_at,
+    pausedAt: row.paused_at ?? null
   };
 }
 

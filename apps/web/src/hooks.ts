@@ -3,25 +3,25 @@ import type { CurrentGameState, Role } from '@roadmap/shared';
 import { clearToken, currentGame, getToken, me } from './api.js';
 import { connectSocket } from './socket.js';
 
-export function useSession() {
+export function useSession(tokenRole: 'operator' | 'admin' = 'operator') {
   const [role, setRole] = useState<Role | null>(null);
   const [checking, setChecking] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (!getToken()) {
+    if (!getToken(tokenRole)) {
       setChecking(false);
       return;
     }
     try {
-      const data = await me();
+      const data = await me(tokenRole);
       setRole(data.role);
     } catch {
-      clearToken();
+      clearToken(tokenRole);
       setRole(null);
     } finally {
       setChecking(false);
     }
-  }, []);
+  }, [tokenRole]);
 
   useEffect(() => {
     void refresh();

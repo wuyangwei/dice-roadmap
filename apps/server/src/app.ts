@@ -5,7 +5,7 @@ import os from 'node:os';
 import { z } from 'zod';
 import { loginWithPin, requireAuth } from './auth.js';
 import { HttpError } from './errors.js';
-import { createGame, endGame, getCurrentGameState, getGameDetail, listGames } from './gameService.js';
+import { createGame, endGame, getCurrentGameState, getGameDetail, listGames, pauseGame, resumeGame } from './gameService.js';
 import { createRound, deleteLastRound, updateLastRound } from './roundService.js';
 import { broadcastStateChanged } from './socket.js';
 import { config } from './config.js';
@@ -64,6 +64,26 @@ export function createApp() {
     try {
       const game = endGame(Number(request.params.id));
       broadcastStateChanged('game:ended');
+      response.json(game);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post('/api/games/:id/pause', requireAuth('admin'), (request, response, next) => {
+    try {
+      const game = pauseGame(Number(request.params.id));
+      broadcastStateChanged('game:paused');
+      response.json(game);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post('/api/games/:id/resume', requireAuth('admin'), (request, response, next) => {
+    try {
+      const game = resumeGame(Number(request.params.id));
+      broadcastStateChanged('game:resumed');
       response.json(game);
     } catch (error) {
       next(error);

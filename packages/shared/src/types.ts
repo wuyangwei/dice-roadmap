@@ -1,5 +1,5 @@
 export type BaseResult = '单' | '双';
-export type GameStatus = 'active' | 'ended';
+export type GameStatus = 'active' | 'paused' | 'ended';
 export type Role = 'operator' | 'admin';
 
 export type Game = {
@@ -10,6 +10,7 @@ export type Game = {
   joyDice1: number | null;
   joyDice2: number | null;
   startedAt: string;
+  pausedAt: string | null;
   endedAt: string | null;
 };
 

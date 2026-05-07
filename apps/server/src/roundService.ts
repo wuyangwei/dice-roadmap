@@ -18,6 +18,7 @@ export function createRound(input: z.infer<typeof roundInputSchema>) {
 
   const game = getActiveGame();
   if (!game) throw new HttpError(400, '当前没有进行中的游戏');
+  if (game.status === 'paused') throw new HttpError(400, '游戏已暂停，无法录入');
 
   const maxRow = db.prepare('SELECT MAX(round_no) AS max_round_no FROM rounds WHERE game_id = ?').get(game.id) as { max_round_no: number | null };
   const roundNo = (maxRow.max_round_no ?? 0) + 1;
@@ -36,6 +37,7 @@ export function updateLastRound(input: z.infer<typeof roundInputSchema>) {
   const parsed = roundInputSchema.parse(input);
   const game = getActiveGame();
   if (!game) throw new HttpError(400, '当前没有进行中的游戏');
+  if (game.status === 'paused') throw new HttpError(400, '游戏已暂停，无法修改');
 
   const last = assertFound(
     db.prepare('SELECT * FROM rounds WHERE game_id = ? ORDER BY round_no DESC LIMIT 1').get(game.id),
@@ -57,6 +59,7 @@ export function updateLastRound(input: z.infer<typeof roundInputSchema>) {
 export function deleteLastRound() {
   const game = getActiveGame();
   if (!game) throw new HttpError(400, '当前没有进行中的游戏');
+  if (game.status === 'paused') throw new HttpError(400, '游戏已暂停，无法删除');
 
   const last = assertFound(
     db.prepare('SELECT * FROM rounds WHERE game_id = ? ORDER BY round_no DESC LIMIT 1').get(game.id),

@@ -1,17 +1,25 @@
-import { QrCode } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useCurrentGame } from '../hooks.js';
 import { BeadRoad } from '../components/BeadRoad.js';
 import { BigRoad } from '../components/BigRoad.js';
 import { StatsPanel } from '../components/StatsPanel.js';
-import { useCurrentGame } from '../hooks.js';
+
+function formatLocalTime(isoStr: string): string {
+  return new Date(isoStr).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}
+
+function useClock() {
+  const [time, setTime] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}
 
 export function DisplayPage() {
   const { state, connected, error } = useCurrentGame(true);
-  const [network, setNetwork] = useState<{ mobileUrl: string; qrCode: string } | null>(null);
-
-  useEffect(() => {
-    fetch('/api/network').then((res) => res.json()).then(setNetwork).catch(() => undefined);
-  }, []);
+  const clock = useClock();
 
   if (!state) return <div className="screen center">{error ?? '加载中...'}</div>;
 
@@ -20,24 +28,30 @@ export function DisplayPage() {
       <div className="screen empty-state">
         <h1>当前没有进行中的游戏</h1>
         <p>请使用管理员手机端创建新游戏</p>
-        {network && <img className="qr-large" src={network.qrCode} alt="手机端二维码" />}
-        <span>{network?.mobileUrl}</span>
       </div>
     );
   }
 
-  const latest = state.rounds.at(-1);
+  const { game } = state;
 
   return (
     <div className="screen display-layout">
       <header className="topbar">
         <div>
-          <h1>{state.game.name}</h1>
-          <span className="muted">{connected ? '实时连接' : '连接断开'} · 进行中 · 已开 {state.stats.total} 局</span>
+          <h1>{game.name}</h1>
+          <span className="muted">{connected ? '实时连接' : '连接断开'} · 已开 {state.stats.total} 局</span>
         </div>
-        <div className="qr-chip">
-          <QrCode size={18} />
-          <span>{network?.mobileUrl ?? '手机端地址加载中'}</span>
+        <div className="topbar-clock">{clock}</div>
+        <div style={{ textAlign: 'center' }}>
+          <span className={`game-status-badge status-${game.status}`}>
+            {game.status === 'active' ? '进行中' : game.status === 'paused' ? '已暂停' : '已结束'}
+          </span>
+          {game.status === 'paused' && game.pausedAt && (
+            <div className="muted" style={{ fontSize: '13px', marginTop: '4px' }}>{formatLocalTime(game.pausedAt)}</div>
+          )}
+          {game.status === 'ended' && game.endedAt && (
+            <div className="muted" style={{ fontSize: '13px', marginTop: '4px' }}>{formatLocalTime(game.endedAt)}</div>
+          )}
         </div>
       </header>
 
@@ -54,10 +68,6 @@ export function DisplayPage() {
         </section>
         <StatsPanel state={state} />
       </main>
-
-      <footer className="footerbar">
-        {latest ? `最近记录：第${latest.roundNo}局 ${latest.dice1}+${latest.dice2} ${latest.isJoyPoint ? '欢乐点' : latest.baseResult} ${latest.createdAt}` : '暂无记录'}
-      </footer>
     </div>
   );
 }

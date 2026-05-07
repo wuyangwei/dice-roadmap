@@ -1,21 +1,24 @@
 import type { CurrentGameState, Role } from '@roadmap/shared';
 
-const TOKEN_KEY = 'roadmap_session_token';
+const TOKEN_KEYS: Record<'operator' | 'admin', string> = {
+  operator: 'roadmap_token_operator',
+  admin: 'roadmap_token_admin',
+};
 
-export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+export function getToken(role: 'operator' | 'admin' = 'operator') {
+  return localStorage.getItem(TOKEN_KEYS[role]);
 }
 
-export function setToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token);
+export function setToken(token: string, role: 'operator' | 'admin' = 'operator') {
+  localStorage.setItem(TOKEN_KEYS[role], token);
 }
 
-export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
+export function clearToken(role: 'operator' | 'admin' = 'operator') {
+  localStorage.removeItem(TOKEN_KEYS[role]);
 }
 
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = getToken();
+export async function api<T>(path: string, options: RequestInit = {}, tokenRole: 'operator' | 'admin' = 'operator'): Promise<T> {
+  const token = getToken(tokenRole);
   const response = await fetch(path, {
     ...options,
     headers: {
@@ -38,15 +41,28 @@ export function login(pin: string) {
   return api<{ token: string; role: Role; expiresAt: string }>('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ pin, deviceId })
+  // login 请求本身不需要携带 token，用默认值即可
   });
 }
 
-export function me() {
-  return api<{ role: Role }>('/api/auth/me');
+export function me(tokenRole: 'operator' | 'admin' = 'operator') {
+  return api<{ role: Role }>('/api/auth/me', {}, tokenRole);
 }
 
 export function currentGame() {
   return api<CurrentGameState>('/api/current-game');
+}
+
+export function pauseGame(id: number) {
+  return api(`/api/games/${id}/pause`, { method: 'POST' }, 'admin');
+}
+
+export function resumeGame(id: number) {
+  return api(`/api/games/${id}/resume`, { method: 'POST' }, 'admin');
+}
+
+export function endGameById(id: number) {
+  return api(`/api/games/${id}/end`, { method: 'POST' }, 'admin');
 }
 
 function generateUUID(): string {

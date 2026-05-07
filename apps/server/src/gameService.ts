@@ -13,7 +13,7 @@ export const createGameSchema = z.object({
 });
 
 export function getActiveGame(): Game | null {
-  const row = db.prepare("SELECT * FROM games WHERE status = 'active' ORDER BY id DESC LIMIT 1").get();
+  const row = db.prepare("SELECT * FROM games WHERE status IN ('active', 'paused') ORDER BY id DESC LIMIT 1").get();
   return row ? mapGame(row) : null;
 }
 
@@ -60,9 +60,25 @@ export function createGame(input: z.infer<typeof createGameSchema>): Game {
 
 export function endGame(gameId: number): Game {
   const game = mapGame(assertFound(db.prepare('SELECT * FROM games WHERE id = ?').get(gameId), '游戏不存在'));
-  if (game.status !== 'active') throw new HttpError(400, '游戏已经结束');
+  if (game.status === 'ended') throw new HttpError(400, '游戏已经结束');
 
   db.prepare("UPDATE games SET status = 'ended', ended_at = ? WHERE id = ?").run(nowIsoSeconds(), gameId);
+  return mapGame(assertFound(db.prepare('SELECT * FROM games WHERE id = ?').get(gameId)));
+}
+
+export function pauseGame(gameId: number): Game {
+  const game = mapGame(assertFound(db.prepare('SELECT * FROM games WHERE id = ?').get(gameId), '游戏不存在'));
+  if (game.status !== 'active') throw new HttpError(400, game.status === 'paused' ? '游戏已暂停' : '游戏已结束');
+
+  db.prepare("UPDATE games SET status = 'paused', paused_at = ? WHERE id = ?").run(nowIsoSeconds(), gameId);
+  return mapGame(assertFound(db.prepare('SELECT * FROM games WHERE id = ?').get(gameId)));
+}
+
+export function resumeGame(gameId: number): Game {
+  const game = mapGame(assertFound(db.prepare('SELECT * FROM games WHERE id = ?').get(gameId), '游戏不存在'));
+  if (game.status !== 'paused') throw new HttpError(400, game.status === 'active' ? '游戏未暂停' : '游戏已结束');
+
+  db.prepare("UPDATE games SET status = 'active', paused_at = NULL WHERE id = ?").run(gameId);
   return mapGame(assertFound(db.prepare('SELECT * FROM games WHERE id = ?').get(gameId)));
 }
 

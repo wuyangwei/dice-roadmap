@@ -14,11 +14,12 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS games (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  status TEXT NOT NULL CHECK (status IN ('active', 'ended')),
+  status TEXT NOT NULL CHECK (status IN ('active', 'paused', 'ended')),
   joy_point_enabled INTEGER NOT NULL DEFAULT 0,
   joy_dice_1 INTEGER,
   joy_dice_2 INTEGER,
   started_at TEXT NOT NULL,
+  paused_at TEXT,
   ended_at TEXT
 );
 
@@ -55,6 +56,38 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT NOT NULL
 );
 `);
+
+// 迁移：若 games 表的 CHECK 约束不含 'paused'，则重建表
+const gameTableSql = (db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='games'").get() as { sql: string } | undefined)?.sql ?? '';
+if (!gameTableSql.includes("'paused'")) {
+  db.exec(`
+    PRAGMA foreign_keys = OFF;
+    BEGIN;
+    ALTER TABLE games RENAME TO _games_old;
+    CREATE TABLE games (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      status TEXT NOT NULL CHECK (status IN ('active', 'paused', 'ended')),
+      joy_point_enabled INTEGER NOT NULL DEFAULT 0,
+      joy_dice_1 INTEGER,
+      joy_dice_2 INTEGER,
+      started_at TEXT NOT NULL,
+      paused_at TEXT,
+      ended_at TEXT
+    );
+    INSERT INTO games (id, name, status, joy_point_enabled, joy_dice_1, joy_dice_2, started_at, ended_at)
+      SELECT id, name, status, joy_point_enabled, joy_dice_1, joy_dice_2, started_at, ended_at FROM _games_old;
+    DROP TABLE _games_old;
+    COMMIT;
+    PRAGMA foreign_keys = ON;
+  `);
+}
+
+// 迁移：补 paused_at 列（旧数据库可能没有）
+const gameColumns = (db.prepare("PRAGMA table_info(games)").all() as { name: string }[]).map((c) => c.name);
+if (!gameColumns.includes('paused_at')) {
+  db.exec("ALTER TABLE games ADD COLUMN paused_at TEXT");
+}
 
 const upsertSetting = db.prepare(`
 INSERT INTO settings (key, value)
