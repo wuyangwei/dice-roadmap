@@ -141,7 +141,7 @@ export function createApp() {
   if (existsSync(WEB_DIST)) {
     app.use(express.static(WEB_DIST));
     // SPA fallback：所有非 /api 路由交给前端 index.html 处理
-    app.get('*', (_request, response) => {
+    app.get('/*path', (_request, response) => {
       response.sendFile(path.join(WEB_DIST, 'index.html'));
     });
   }
