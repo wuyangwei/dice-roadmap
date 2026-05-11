@@ -2,6 +2,9 @@ import express, { type NextFunction, type Request, type Response } from 'express
 import cors from 'cors';
 import QRCode from 'qrcode';
 import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
 import { z } from 'zod';
 import { loginWithPin, requireAuth } from './auth.js';
 import { HttpError } from './errors.js';
@@ -10,10 +13,18 @@ import { createRound, deleteLastRound, updateLastRound } from './roundService.js
 import { broadcastStateChanged } from './socket.js';
 import { config } from './config.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export function createApp() {
   const app = express();
   app.use(cors({ origin: true, credentials: true }));
   app.use(express.json());
+
+  // 生产环境：托管前端静态文件
+  const webDist = path.resolve(__dirname, '../../web/dist');
+  if (existsSync(webDist)) {
+    app.use(express.static(webDist));
+  }
 
   app.get('/api/health', (_request, response) => {
     response.json({ ok: true });
@@ -127,6 +138,13 @@ export function createApp() {
       next(error);
     }
   });
+
+  // SPA fallback：非 API 路由一律返回 index.html
+  if (existsSync(webDist)) {
+    app.get('*', (_request, response) => {
+      response.sendFile(path.join(webDist, 'index.html'));
+    });
+  }
 
   app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
     if (error instanceof z.ZodError) {

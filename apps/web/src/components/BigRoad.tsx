@@ -40,7 +40,7 @@ export function BigRoad({ rounds }: { rounds: Round[] }) {
       <div className="road-grid" style={{ gridTemplateColumns: `repeat(${cols}, var(--cell-size))` }}>
         {cells.map((cell) => (
           <div key={cell.round.id} style={{ gridColumn: cell.col + 1, gridRow: cell.row + 1 }}>
-            <RoadCell round={cell.round} compact />
+            <RoadCell round={cell.round} />
           </div>
         ))}
       </div>
