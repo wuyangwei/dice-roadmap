@@ -14,17 +14,13 @@ import { broadcastStateChanged } from './socket.js';
 import { config } from './config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// web 静态文件目录：生产时为 dist 同级的 web/dist，开发时不存在则跳过
+const WEB_DIST = path.resolve(__dirname, '../../web/dist');
 
 export function createApp() {
   const app = express();
   app.use(cors({ origin: true, credentials: true }));
   app.use(express.json());
-
-  // 生产环境：托管前端静态文件
-  const webDist = path.resolve(__dirname, '../../web/dist');
-  if (existsSync(webDist)) {
-    app.use(express.static(webDist));
-  }
 
   app.get('/api/health', (_request, response) => {
     response.json({ ok: true });
@@ -33,7 +29,9 @@ export function createApp() {
   app.get('/api/network', async (_request, response, next) => {
     try {
       const address = getLocalAddress();
-      const mobileUrl = `http://${address}:${config.webPort}/mobile`;
+      // 生产模式下前后端同端口，开发模式下使用 webPort
+      const port = existsSync(WEB_DIST) ? config.port : config.webPort;
+      const mobileUrl = `http://${address}:${port}/mobile`;
       response.json({
         address,
         mobileUrl,
@@ -139,10 +137,12 @@ export function createApp() {
     }
   });
 
-  // SPA fallback：非 API 路由一律返回 index.html
-  if (existsSync(webDist)) {
-    app.get('*', (_request, response) => {
-      response.sendFile(path.join(webDist, 'index.html'));
+  // 托管前端静态文件（生产模式，web/dist 存在时）
+  if (existsSync(WEB_DIST)) {
+    app.use(express.static(WEB_DIST));
+    // SPA fallback：所有非 /api 路由交给前端 index.html 处理
+    app.get('/*path', (_request, response) => {
+      response.sendFile(path.join(WEB_DIST, 'index.html'));
     });
   }
 
