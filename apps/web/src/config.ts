@@ -1,11 +1,16 @@
+// 配置文件 - 根据环境自动选择
+const isProduction = typeof window !== 'undefined' && 
+  window.location.protocol !== 'http:' && 
+  !window.location.hostname.includes('localhost') && 
+  !window.location.hostname.includes('127.0.0.1');
+
 export const config = {
-  // 开发环境使用本地后端
-  // 生产环境需要替换为你的 Render 后端地址
-  apiBase: import.meta.env.PROD 
-    ? 'https://your-render-backend-url.onrender.com' 
+  // 生产环境使用你的后端地址，开发环境使用相对路径（通过 Vite 代理）
+  apiBase: isProduction 
+    ? 'https://your-backend-url.onrender.com'  // 替换为你的实际后端地址
     : '',
   
-  webSocketUrl: import.meta.env.PROD
-    ? 'wss://your-render-backend-url.onrender.com'
+  webSocketUrl: isProduction
+    ? 'wss://your-backend-url.onrender.com'  // 替换为你的实际后端地址
     : ''
 };
