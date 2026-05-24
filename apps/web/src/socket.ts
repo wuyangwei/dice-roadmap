@@ -1,11 +1,13 @@
 import { io, type Socket } from 'socket.io-client';
 import { getDeviceId, getToken } from './api.js';
+import { config } from './config.js';
 
 let socket: Socket | null = null;
 
 export function connectSocket(onChange: () => void, onStatus: (connected: boolean) => void) {
   socket?.disconnect();
-  socket = io('/', { transports: ['websocket', 'polling'] });
+  const socketUrl = config.webSocketUrl || '/';
+  socket = io(socketUrl, { transports: ['websocket', 'polling'] });
 
   socket.on('connect', () => {
     onStatus(true);

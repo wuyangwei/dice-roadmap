@@ -1,4 +1,5 @@
 import type { CurrentGameState, Role } from '@roadmap/shared';
+import { config } from './config';
 
 const TOKEN_KEYS: Record<'operator' | 'admin', string> = {
   operator: 'roadmap_token_operator',
@@ -19,7 +20,8 @@ export function clearToken(role: 'operator' | 'admin' = 'operator') {
 
 export async function api<T>(path: string, options: RequestInit = {}, tokenRole: 'operator' | 'admin' = 'operator'): Promise<T> {
   const token = getToken(tokenRole);
-  const response = await fetch(path, {
+  const url = config.apiBase ? `${config.apiBase}${path}` : path;
+  const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
