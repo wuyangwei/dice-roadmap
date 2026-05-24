@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0",
+  "envId": "your-env-id",
+  "framework": {
+    "name": "dice-roadmap",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "buildCommand": "cd apps/web && npm install && npm run build",
+          "outputPath": "apps/web/dist",
+          "cloudPath": "/"
+        }
+      },
+      "server": {
+        "use": "@cloudbase/framework-plugin-node",
+        "inputs": {
+          "name": "dice-roadmap-server",
+          "entry": "apps/server/dist/index.js",
+          "path": "/api",
+          "projectPath": "apps/server",
+          "buildCommand": "cd apps/server && npm install && npm run build"
+        }
+      }
+    }
+  }
+}
