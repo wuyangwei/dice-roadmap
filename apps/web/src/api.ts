@@ -65,6 +65,15 @@ export function endGameById(id: number) {
   return api(`/api/games/${id}/end`, { method: 'POST' }, 'admin');
 }
 
+export function createGame(input: {
+  name?: string;
+  joyPointEnabled: boolean;
+  joyDice1?: number | null;
+  joyDice2?: number | null;
+}) {
+  return api('/api/games', { method: 'POST', body: JSON.stringify(input) }, 'admin');
+}
+
 function generateUUID(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();

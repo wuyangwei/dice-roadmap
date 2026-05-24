@@ -77,6 +77,7 @@ export function MobilePage() {
       <div className="mobile-screen">
         <h1>当前没有进行中的游戏</h1>
         {session.role === 'admin' ? <CreateGame onDone={refresh} /> : <p className="muted">请联系管理员创建新游戏</p>}
+        <a className="text-link" href="/admin" style={{ textAlign: 'center', marginTop: '16px' }}>管理端</a>
       </div>
     );
   }

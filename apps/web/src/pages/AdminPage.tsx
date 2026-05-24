@@ -1,12 +1,21 @@
 import { useState } from 'react';
 import type { Game, Round, Stats } from '@roadmap/shared';
-import { api, endGameById, login, pauseGame, resumeGame, setToken } from '../api.js';
+import { api, createGame, endGameById, login, pauseGame, resumeGame, setToken } from '../api.js';
 import { BeadRoad } from '../components/BeadRoad.js';
 import { BigRoad } from '../components/BigRoad.js';
+import { DicePicker } from '../components/DicePicker.js';
 import { useCurrentGame, useSession } from '../hooks.js';
 
 type GameListItem = { game: Game; stats: Stats };
 type GameDetail = { game: Game; rounds: Round[]; stats: Stats };
+
+function fmtTime(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 export function AdminPage() {
   const session = useSession('admin');
@@ -17,6 +26,11 @@ export function AdminPage() {
   const [ctrlMsg, setCtrlMsg] = useState('');
   const [pin, setPin] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [newGameName, setNewGameName] = useState('');
+  const [joyPointEnabled, setJoyPointEnabled] = useState(false);
+  const [joyDice1, setJoyDice1] = useState<number | null>(null);
+  const [joyDice2, setJoyDice2] = useState<number | null>(null);
+  const [createError, setCreateError] = useState('');
 
   async function handleLogin() {
     try {
@@ -66,6 +80,30 @@ export function AdminPage() {
       setCtrlMsg('');
     } catch (err) {
       setCtrlMsg(err instanceof Error ? err.message : '操作失败');
+    }
+  }
+
+  async function handleStartGame() {
+    if (joyPointEnabled && (!joyDice1 || !joyDice2)) {
+      setCreateError('启用欢乐点时必须选择两个骰子点数');
+      return;
+    }
+    try {
+      setCreateError('');
+      await createGame({
+        name: newGameName.trim() || undefined,
+        joyPointEnabled,
+        joyDice1: joyPointEnabled ? joyDice1 : null,
+        joyDice2: joyPointEnabled ? joyDice2 : null,
+      });
+      setNewGameName('');
+      setJoyPointEnabled(false);
+      setJoyDice1(null);
+      setJoyDice2(null);
+      await refreshCurrent();
+      await loadGames();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : '创建失败');
     }
   }
 
@@ -137,7 +175,36 @@ export function AdminPage() {
             {ctrlMsg && <p className="error-text" style={{ margin: '6px 0 0' }}>{ctrlMsg}</p>}
           </>
         ) : (
-          <span className="muted">当前没有进行中的游戏</span>
+          <div className="create-game-form">
+            <span className="muted">当前没有进行中的游戏</span>
+            <input
+              value={newGameName}
+              onChange={(e) => setNewGameName(e.target.value)}
+              placeholder="游戏名称（可选）"
+            />
+            <label className="switch-line">
+              <input
+                type="checkbox"
+                checked={joyPointEnabled}
+                onChange={(e) => setJoyPointEnabled(e.target.checked)}
+              />
+              启用欢乐点
+            </label>
+            {joyPointEnabled && (
+              <>
+                <DicePicker label="欢乐点骰子 A" value={joyDice1} onChange={setJoyDice1} />
+                <DicePicker label="欢乐点骰子 B" value={joyDice2} onChange={setJoyDice2} />
+              </>
+            )}
+            {createError && <p className="error-text">{createError}</p>}
+            <button
+              className="primary-button"
+              disabled={joyPointEnabled && (!joyDice1 || !joyDice2)}
+              onClick={handleStartGame}
+            >
+              开始游戏
+            </button>
+          </div>
         )}
       </section>
 
@@ -153,7 +220,7 @@ export function AdminPage() {
             <button key={item.game.id} className="game-card" onClick={() => openDetail(item.game.id)}>
               <strong>{item.game.name}</strong>
               <span>{item.stats.total}局 | 单{item.stats.singles} 双{item.stats.doubles} | 欢乐点{item.stats.joyPoints}</span>
-              <small>{item.game.startedAt} - {item.game.endedAt ?? '进行中'}</small>
+              <small>{fmtTime(item.game.startedAt)} - {item.game.endedAt ? fmtTime(item.game.endedAt) : '进行中'}</small>
             </button>
           ))}
         </section>

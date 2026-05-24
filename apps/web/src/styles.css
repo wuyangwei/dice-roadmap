@@ -527,6 +527,21 @@ input {
   background: var(--danger);
 }
 
+.create-game-form {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-strong);
+  width: 560px;
+  max-width: 100%;
+}
+
+.create-game-form .dice-grid {
+  grid-template-columns: repeat(6, 1fr);
+}
+
 .paused-banner {
   margin: 10px 0 0;
   padding: 10px 14px;
