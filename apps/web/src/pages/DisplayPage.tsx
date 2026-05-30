@@ -20,6 +20,25 @@ function useClock() {
 export function DisplayPage() {
   const { state, connected, error } = useCurrentGame(true);
   const clock = useClock();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.log('全屏请求失败:', err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   if (!state) return <div className="screen center">{error ?? '加载中...'}</div>;
 
@@ -53,6 +72,13 @@ export function DisplayPage() {
             <div className="muted" style={{ fontSize: '13px', marginTop: '4px' }}>{formatLocalTime(game.endedAt)}</div>
           )}
         </div>
+        <button 
+          className="fullscreen-btn"
+          onClick={toggleFullscreen}
+          title={isFullscreen ? '退出全屏' : '全屏显示'}
+        >
+          {isFullscreen ? '✕ 退出全屏' : '⛶ 全屏'}
+        </button>
       </header>
 
       <main className="display-main">
