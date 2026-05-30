@@ -8,10 +8,12 @@
     "dev:server": "pnpm --filter @roadmap/server dev",
     "dev:web": "pnpm --filter @roadmap/web dev",
     "build": "pnpm -r build",
-    "typecheck": "pnpm --filter @roadmap/shared build && pnpm -r typecheck"
+    "typecheck": "pnpm --filter @roadmap/shared build && pnpm -r typecheck",
+    "start": "node apps/server/dist/index.js",
+    "tunnel": "node start-tunnel.js"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
