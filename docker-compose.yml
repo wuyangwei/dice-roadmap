@@ -1,0 +1,37 @@
+# =============================================================================
+# dice-roadmap Docker Compose 配置
+# 用于本地测试或部署到支持 Docker Compose 的云服务
+# =============================================================================
+
+version: '3.8'
+
+services:
+  roadmap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dice-roadmap
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      - DATA_DIR=/app/data
+      # 首次运行后，请在 .env 文件中配置以下参数并取消注释
+      # - JWT_SECRET=your-secret-key
+      # - OPERATOR_PIN=123456
+      # - ADMIN_PIN=888888
+    volumes:
+      - roadmap-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  roadmap-data:
+    driver: local
