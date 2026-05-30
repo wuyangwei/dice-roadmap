@@ -10,6 +10,9 @@ services:
     region: singapore  # 新加坡节点，国内访问更快
     dockerfilePath: Dockerfile
     dockerContext: .
+    # 必填字段（Render 要求）
+    buildCommand: ""
+    startCommand: "node apps/server/dist/index.js"
     # 健康检查配置
     healthCheckPath: /api/health
     healthCheckInterval: 30
