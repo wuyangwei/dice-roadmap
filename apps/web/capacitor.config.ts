@@ -1,19 +1,9 @@
-import { defineConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli';
 
-const config = defineConfig({
+const config: CapacitorConfig = {
   appId: 'com.dice.roadmap',
-  appName: 'Dice Roadmap',
-  webDir: 'dist',
-  server: {
-    androidScheme: 'https',
-    // 你的服务器地址
-    cleartext: true
-  },
-  android: {
-    buildOptions: {
-      signingType: 'apksigner'
-    }
-  }
-});
+  appName: '骰子路单',
+  webDir: 'dist'
+};
 
 export default config;

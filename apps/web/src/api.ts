@@ -1,5 +1,10 @@
 import type { CurrentGameState, Role } from '@roadmap/shared';
 
+const isCapacitorApp = location.protocol === 'file:';
+const API_BASE_URL = isCapacitorApp 
+  ? 'http://119.91.193.22:3001' 
+  : '';
+
 const TOKEN_KEYS: Record<'operator' | 'admin', string> = {
   operator: 'roadmap_token_operator',
   admin: 'roadmap_token_admin',
@@ -19,7 +24,7 @@ export function clearToken(role: 'operator' | 'admin' = 'operator') {
 
 export async function api<T>(path: string, options: RequestInit = {}, tokenRole: 'operator' | 'admin' = 'operator'): Promise<T> {
   const token = getToken(tokenRole);
-  const response = await fetch(path, {
+  const response = await fetch(API_BASE_URL + path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

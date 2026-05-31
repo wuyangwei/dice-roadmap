@@ -1,6 +1,10 @@
 node_modules
 dist
+dist-*
 .DS_Store
 data/*.sqlite
 data/*.sqlite-*
 .env
+apps/web/android
+apps/web/android-*
+apps/web/capacitor.config.ts.backup
