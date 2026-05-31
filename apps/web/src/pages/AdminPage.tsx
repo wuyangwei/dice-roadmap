@@ -5,7 +5,7 @@ import { BeadRoad } from '../components/BeadRoad.js';
 import { BigRoad } from '../components/BigRoad.js';
 import { DicePicker } from '../components/DicePicker.js';
 import { useCurrentGame, useSession } from '../hooks.js';
-import { navigateTo } from '../App.js';
+import { useRouter } from '../App.js';
 
 type GameListItem = { game: Game; stats: Stats };
 type GameDetail = { game: Game; rounds: Round[]; stats: Stats };
@@ -19,6 +19,7 @@ function fmtTime(iso: string | null | undefined): string {
 }
 
 export function AdminPage() {
+  const { navigateTo } = useRouter();
   const session = useSession('admin');
   const { state: currentState, refresh: refreshCurrent } = useCurrentGame(session.role === 'admin');
   const [items, setItems] = useState<GameListItem[]>([]);

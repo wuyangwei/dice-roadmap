@@ -4,9 +4,10 @@ import { getBaseResult, isJoyPoint } from '@roadmap/shared';
 import { api, login, setToken } from '../api.js';
 import { DicePicker } from '../components/DicePicker.js';
 import { useCurrentGame, useSession } from '../hooks.js';
-import { navigateTo } from '../App.js';
+import { useRouter } from '../App.js';
 
 export function MobilePage() {
+  const { navigateTo } = useRouter();
   const session = useSession('operator');
   const { state, connected, refresh } = useCurrentGame(Boolean(session.role));
   const [pin, setPin] = useState('');
