@@ -4,6 +4,7 @@ import { getBaseResult, isJoyPoint } from '@roadmap/shared';
 import { api, login, setToken } from '../api.js';
 import { DicePicker } from '../components/DicePicker.js';
 import { useCurrentGame, useSession } from '../hooks.js';
+import { navigateTo } from '../App.js';
 
 export function MobilePage() {
   const session = useSession('operator');
@@ -13,7 +14,7 @@ export function MobilePage() {
   const [dice2, setDice2] = useState<number | null>(null);
   const [message, setMessage] = useState('');
   
-  const isMobileApk = import.meta.env.VITE_APP_MODE === 'mobile';
+  const isStandaloneApp = import.meta.env.VITE_APP_MODE === 'mobile' || import.meta.env.VITE_APP_MODE === 'admin' || import.meta.env.VITE_APP_MODE === 'display';
 
   const preview = useMemo(() => {
     if (!dice1 || !dice2 || !state?.game) return null;
@@ -69,7 +70,21 @@ export function MobilePage() {
         <input value={pin} onChange={(event) => setPin(event.target.value)} placeholder="请输入 PIN" inputMode="numeric" type="password" onKeyDown={(e) => e.key === 'Enter' && handleLogin()} />
         <button className="primary-button" onClick={handleLogin}>登录</button>
         {message && <p className="error-text">{message}</p>}
-        {!isMobileApk && <a className="text-link" href="/admin" style={{ textAlign: 'center' }}>前往管理端</a>}
+        <button 
+          className="text-link" 
+          style={{ 
+            textAlign: 'center', 
+            background: 'none', 
+            border: 'none', 
+            padding: '8px 0',
+            color: 'var(--joy)',
+            cursor: 'pointer',
+            fontWeight: 'normal'
+          }}
+          onClick={() => navigateTo('/admin')}
+        >
+          前往管理端
+        </button>
       </div>
     );
   }
@@ -79,7 +94,22 @@ export function MobilePage() {
       <div className="mobile-screen">
         <h1>当前没有进行中的游戏</h1>
         {session.role === 'admin' ? <CreateGame onDone={refresh} /> : <p className="muted">请联系管理员创建新游戏</p>}
-        {!isMobileApk && <a className="text-link" href="/admin" style={{ textAlign: 'center', marginTop: '16px' }}>管理端</a>}
+        <button 
+          className="text-link" 
+          style={{ 
+            textAlign: 'center', 
+            marginTop: '16px', 
+            background: 'none', 
+            border: 'none', 
+            padding: '8px 0',
+            color: 'var(--joy)',
+            cursor: 'pointer',
+            fontWeight: 'normal'
+          }}
+          onClick={() => navigateTo('/admin')}
+        >
+          管理端
+        </button>
       </div>
     );
   }
@@ -121,7 +151,21 @@ export function MobilePage() {
         </div>
       </section>
 
-      {!isMobileApk && <a className="text-link" href="/admin" style={{ textAlign: 'center' }}>管理端</a>}
+      <button 
+        className="text-link" 
+        style={{ 
+          textAlign: 'center', 
+          background: 'none', 
+          border: 'none', 
+          padding: '8px 0',
+          color: 'var(--joy)',
+          cursor: 'pointer',
+          fontWeight: 'normal'
+        }}
+        onClick={() => navigateTo('/admin')}
+      >
+        管理端
+      </button>
       {message && <p className="message-text">{message}</p>}
     </div>
   );

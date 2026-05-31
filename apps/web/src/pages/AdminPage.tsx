@@ -5,6 +5,7 @@ import { BeadRoad } from '../components/BeadRoad.js';
 import { BigRoad } from '../components/BigRoad.js';
 import { DicePicker } from '../components/DicePicker.js';
 import { useCurrentGame, useSession } from '../hooks.js';
+import { navigateTo } from '../App.js';
 
 type GameListItem = { game: Game; stats: Stats };
 type GameDetail = { game: Game; rounds: Round[]; stats: Stats };
@@ -137,7 +138,20 @@ export function AdminPage() {
           />
           <button className="primary-button" onClick={handleLogin}>登录</button>
           {loginError && <p className="error-text">{loginError}</p>}
-          <a className="text-link" href="/mobile">切换到操作端</a>
+          <button 
+            className="text-link" 
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              padding: '8px 0',
+              color: 'var(--joy)',
+              cursor: 'pointer',
+              fontWeight: 'normal'
+            }}
+            onClick={() => navigateTo('/mobile')}
+          >
+            切换到操作端
+          </button>
         </div>
       </div>
     );
@@ -149,7 +163,20 @@ export function AdminPage() {
     <div className="screen admin-page">
       <header className="topbar">
         <h1>管理后台</h1>
-        <a className="text-link" href="/mobile">操作端</a>
+        <button 
+          className="text-link" 
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            padding: '8px 0',
+            color: 'var(--joy)',
+            cursor: 'pointer',
+            fontWeight: 'normal'
+          }}
+          onClick={() => navigateTo('/mobile')}
+        >
+          操作端
+        </button>
       </header>
 
       {/* 当前游戏控制面板 */}
