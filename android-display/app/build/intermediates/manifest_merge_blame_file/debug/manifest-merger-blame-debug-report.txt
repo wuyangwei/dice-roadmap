@@ -1,0 +1,52 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.dice.roadmap.display"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:5:5-67
+11-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:5:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:6:5-79
+12-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:6:22-76
+13
+14    <application
+14-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:8:5-23:19
+15        android:allowBackup="true"
+15-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:9:9-35
+16        android:debuggable="true"
+17        android:extractNativeLibs="false"
+18        android:icon="@android:drawable/ic_menu_gallery"
+18-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:10:9-57
+19        android:label="骰子路单-大屏"
+19-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:11:9-32
+20        android:networkSecurityConfig="@xml/network_security_config"
+20-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:12:9-69
+21        android:testOnly="true"
+22        android:theme="@android:style/Theme.NoTitleBar" >
+22-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:13:9-56
+23        <activity
+23-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:15:9-22:20
+24            android:name="com.dice.roadmap.display.MainActivity"
+24-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:16:13-41
+25            android:exported="true" >
+25-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:17:13-36
+26            <intent-filter>
+26-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:18:13-21:29
+27                <action android:name="android.intent.action.MAIN" />
+27-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:19:17-69
+27-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:19:25-66
+28
+29                <category android:name="android.intent.category.LAUNCHER" />
+29-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:20:17-77
+29-->/Users/master/work/dice-roadmap/android-display/app/src/main/AndroidManifest.xml:20:27-74
+30            </intent-filter>
+31        </activity>
+32    </application>
+33
+34</manifest>

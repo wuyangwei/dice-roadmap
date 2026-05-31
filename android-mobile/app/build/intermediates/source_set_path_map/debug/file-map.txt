@@ -1,0 +1,7 @@
+com.dice.roadmap.app-pngs-0 /Users/master/work/dice-roadmap/android-mobile/app/build/generated/res/pngs/debug
+com.dice.roadmap.app-resValues-1 /Users/master/work/dice-roadmap/android-mobile/app/build/generated/res/resValues/debug
+com.dice.roadmap.app-packageDebugResources-2 /Users/master/work/dice-roadmap/android-mobile/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.dice.roadmap.app-packageDebugResources-3 /Users/master/work/dice-roadmap/android-mobile/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.dice.roadmap.app-merged_res-4 /Users/master/work/dice-roadmap/android-mobile/app/build/intermediates/merged_res/debug
+com.dice.roadmap.app-debug-5 /Users/master/work/dice-roadmap/android-mobile/app/src/debug/res
+com.dice.roadmap.app-main-6 /Users/master/work/dice-roadmap/android-mobile/app/src/main/res
