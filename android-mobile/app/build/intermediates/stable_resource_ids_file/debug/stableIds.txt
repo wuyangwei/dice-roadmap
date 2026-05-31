@@ -1,2 +1,4 @@
-com.dice.roadmap:xml/network_security_config = 0x7f020000
-com.dice.roadmap:string/app_name = 0x7f010000
+com.dice.roadmap:xml/network_security_config = 0x7f030000
+com.dice.roadmap:string/app_name = 0x7f020000
+com.dice.roadmap:mipmap/ic_launcher_round = 0x7f010001
+com.dice.roadmap:mipmap/ic_launcher = 0x7f010000

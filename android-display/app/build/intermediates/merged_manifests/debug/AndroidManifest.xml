@@ -15,7 +15,7 @@
         android:allowBackup="true"
         android:debuggable="true"
         android:extractNativeLibs="false"
-        android:icon="@android:drawable/ic_menu_gallery"
+        android:icon="@mipmap/ic_launcher"
         android:label="骰子路单-大屏"
         android:networkSecurityConfig="@xml/network_security_config"
         android:testOnly="true"
