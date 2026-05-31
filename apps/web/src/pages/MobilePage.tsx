@@ -12,6 +12,8 @@ export function MobilePage() {
   const [dice1, setDice1] = useState<number | null>(null);
   const [dice2, setDice2] = useState<number | null>(null);
   const [message, setMessage] = useState('');
+  
+  const isMobileApk = import.meta.env.VITE_APP_MODE === 'mobile';
 
   const preview = useMemo(() => {
     if (!dice1 || !dice2 || !state?.game) return null;
@@ -67,7 +69,7 @@ export function MobilePage() {
         <input value={pin} onChange={(event) => setPin(event.target.value)} placeholder="请输入 PIN" inputMode="numeric" type="password" onKeyDown={(e) => e.key === 'Enter' && handleLogin()} />
         <button className="primary-button" onClick={handleLogin}>登录</button>
         {message && <p className="error-text">{message}</p>}
-        <a className="text-link" href="/admin" style={{ textAlign: 'center' }}>前往管理端</a>
+        {!isMobileApk && <a className="text-link" href="/admin" style={{ textAlign: 'center' }}>前往管理端</a>}
       </div>
     );
   }
@@ -77,7 +79,7 @@ export function MobilePage() {
       <div className="mobile-screen">
         <h1>当前没有进行中的游戏</h1>
         {session.role === 'admin' ? <CreateGame onDone={refresh} /> : <p className="muted">请联系管理员创建新游戏</p>}
-        <a className="text-link" href="/admin" style={{ textAlign: 'center', marginTop: '16px' }}>管理端</a>
+        {!isMobileApk && <a className="text-link" href="/admin" style={{ textAlign: 'center', marginTop: '16px' }}>管理端</a>}
       </div>
     );
   }
@@ -119,7 +121,7 @@ export function MobilePage() {
         </div>
       </section>
 
-      <a className="text-link" href="/admin" style={{ textAlign: 'center' }}>管理端</a>
+      {!isMobileApk && <a className="text-link" href="/admin" style={{ textAlign: 'center' }}>管理端</a>}
       {message && <p className="message-text">{message}</p>}
     </div>
   );

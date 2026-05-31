@@ -30,11 +30,15 @@ if [ ! -d android-mobile ]; then
   mv android android-mobile
 fi
 
-# 同步并打开
-npx cap sync --config capacitor.config.json
-npx cap open android --config capacitor.config.json
+# 同步
+cd android-mobile
+npx cap sync
+
+# 打开 Android Studio
+open -a "Android Studio" .
 
 # 恢复原来的配置
+cd ..
 mv capacitor.config.json.backup capacitor.config.json
 
 echo "✅ 已打开 Android Studio！请在 Android Studio 里构建 APK"
