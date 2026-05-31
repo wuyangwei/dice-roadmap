@@ -13,8 +13,6 @@ export function MobilePage() {
   const [dice1, setDice1] = useState<number | null>(null);
   const [dice2, setDice2] = useState<number | null>(null);
   const [message, setMessage] = useState('');
-  
-  const isStandaloneApp = import.meta.env.VITE_APP_MODE === 'mobile' || import.meta.env.VITE_APP_MODE === 'admin' || import.meta.env.VITE_APP_MODE === 'display';
 
   const preview = useMemo(() => {
     if (!dice1 || !dice2 || !state?.game) return null;

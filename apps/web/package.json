@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -p tsconfig.json && vite build",
-    "build:mobile": "tsc -p tsconfig.json && VITE_APP_MODE=mobile vite build",
     "build:display": "tsc -p tsconfig.json && VITE_APP_MODE=display vite build",
+    "build:all": "tsc -p tsconfig.json && VITE_APP_MODE=all vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

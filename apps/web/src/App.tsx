@@ -1,11 +1,11 @@
-import { useCallback, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 import { AdminPage } from './pages/AdminPage.js';
 import { DisplayPage } from './pages/DisplayPage.js';
 import { MobilePage } from './pages/MobilePage.js';
 
 declare global {
   interface ImportMetaEnv {
-    readonly VITE_APP_MODE?: 'mobile' | 'display' | 'admin';
+    readonly VITE_APP_MODE?: 'display' | 'all';
   }
 }
 
@@ -31,16 +31,14 @@ export function App() {
   const path = useSyncExternalStore(subscribe, getSnapshot);
   const appMode = import.meta.env.VITE_APP_MODE;
   
-  if (appMode === 'mobile') {
-    return <MobilePage />;
-  }
-  
-  if (appMode === 'admin') {
-    return <AdminPage />;
-  }
-  
   if (appMode === 'display') {
     return <DisplayPage />;
+  }
+  
+  if (appMode === 'all') {
+    if (path.startsWith('/mobile')) return <MobilePage />;
+    if (path.startsWith('/admin')) return <AdminPage />;
+    return <MobilePage />;
   }
   
   if (path.startsWith('/mobile')) return <MobilePage />;

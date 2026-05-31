@@ -2,12 +2,14 @@
 
 cd "$(dirname "$0")/apps/web"
 
+echo "🔨 开始构建 Mobile+Admin APK..."
+
 # 备份原来的配置
 if [ -f capacitor.config.json ]; then
-  mv capacitor.config.json capacitor.config.json.backup
+  cp capacitor.config.json capacitor.config.json.backup
 fi
 
-# 使用 mobile 配置
+# 使用 Mobile+Admin 配置
 cat > capacitor.config.json << 'EOF'
 {
   "appId": "com.dice.roadmap",
@@ -20,8 +22,10 @@ cat > capacitor.config.json << 'EOF'
 }
 EOF
 
-# 构建 mobile 版本
-VITE_APP_MODE=mobile pnpm build
+# 构建 Mobile+Admin 版本
+pnpm build:all
+
+# 重命名输出目录
 mv dist dist-mobile
 
 # 如果没有 Android 项目，添加
@@ -41,5 +45,10 @@ open -a "Android Studio" .
 cd ..
 mv capacitor.config.json.backup capacitor.config.json
 
-echo "✅ 已打开 Android Studio！请在 Android Studio 里构建 APK"
-echo "📱 APK 位置：android-mobile/app/build/outputs/apk/debug/app-debug.apk"
+echo "✅ Mobile+Admin APK 构建完成！"
+echo "📱 位置：android-mobile/app/build/outputs/apk/debug/app-debug.apk"
+echo ""
+echo "📋 APK中包含："
+echo "   - 操作端 (mobile)"
+echo "   - 管理端 (admin)"
+echo "   - 两个页面可以相互跳转"

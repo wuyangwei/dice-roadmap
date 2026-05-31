@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_APP_MODE?: 'mobile' | 'display' | 'admin';
+  readonly VITE_APP_MODE?: 'display' | 'all';
 }
 
 interface ImportMeta {

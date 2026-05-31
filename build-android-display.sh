@@ -2,12 +2,14 @@
 
 cd "$(dirname "$0")/apps/web"
 
+echo "🔨 开始构建 Display APK..."
+
 # 备份原来的配置
 if [ -f capacitor.config.json ]; then
-  mv capacitor.config.json capacitor.config.json.backup
+  cp capacitor.config.json capacitor.config.json.backup
 fi
 
-# 使用 display 配置
+# 使用 Display 配置
 cat > capacitor.config.json << 'EOF'
 {
   "appId": "com.dice.roadmap.display",
@@ -20,8 +22,10 @@ cat > capacitor.config.json << 'EOF'
 }
 EOF
 
-# 构建 display 版本
-VITE_APP_MODE=display pnpm build
+# 构建 Display 版本
+pnpm build:display
+
+# 重命名输出目录
 mv dist dist-display
 
 # 如果没有 Android 项目，添加
@@ -41,5 +45,7 @@ open -a "Android Studio" .
 cd ..
 mv capacitor.config.json.backup capacitor.config.json
 
-echo "✅ 已打开 Android Studio！请在 Android Studio 里构建 APK"
-echo "🖥️ APK 位置：android-display/app/build/outputs/apk/debug/app-debug.apk"
+echo "✅ Display APK 构建完成！"
+echo "🖥️ 位置：android-display/app/build/outputs/apk/debug/app-debug.apk"
+echo ""
+echo "📱 只能在APK中查看大屏展示页面"
